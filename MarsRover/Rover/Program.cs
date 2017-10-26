@@ -75,9 +75,9 @@ namespace Rover
             {
                 _orientation = (OrientationEnum)method.Invoke(type, new object[] { _orientation });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"unable to invoke {ex}");
+                Console.WriteLine($"Unable to invoke command {methodName}");
             }
         }
 
