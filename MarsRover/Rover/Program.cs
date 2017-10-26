@@ -25,26 +25,40 @@ namespace Rover
         {
             _position = 1;
             _orientation = OrientationEnum.South;
+            bool result = false;
 
-            while (true)
+            while (!result)
             {
-                var input = Console.ReadLine();
-                if (String.IsNullOrEmpty(input))
+                for (int i = 0; i < 5; i++)
                 {
-                    break;
-                }
-                int integer;
+                    var input = Console.ReadLine();
+                    if (String.IsNullOrEmpty(input))
+                    {
+                        break;
+                    }
+                    int integer;
 
-                if (Int32.TryParse(input, out integer))
-                {
-                    Move(integer);
-                    
+                    if (Int32.TryParse(input, out integer))
+                    {
+                        result = Move(integer);
+
+                        if (result)
+                        {
+                            break;
+                        }
+                    }
+                    else if (_directionCommands.Contains(input.ToLower()))
+                    {
+                        InvokeDirectionCommands(input);
+                    }
                 }
-                else if (_directionCommands.Contains(input.ToLower()))
+                Console.WriteLine($"Current position: {_position} {_orientation}");
+
+                if (result)
                 {
-                    InvokeDirectionCommands(input);
+                    Console.WriteLine("Edge of area reached. Please press any key to exit.");
+                    Console.ReadKey();
                 }
-                Console.WriteLine($"{_position} {_orientation}");
             }
         }
 
@@ -67,8 +81,9 @@ namespace Rover
             }
         }
 
-        static void Move(int metres)
+        static bool Move(int metres)
         {
+            bool result = false;
             switch (_orientation)
             {
                 case OrientationEnum.North:
@@ -77,6 +92,7 @@ namespace Rover
                     if (_y <= _minYCoordinate)
                     {
                         _y = _minYCoordinate;
+                        result = true;
                     }
                     break;
                 case OrientationEnum.South:
@@ -85,6 +101,7 @@ namespace Rover
                     if (_y >= _maxYCoordinate)
                     {
                         _y = _maxYCoordinate;
+                        result = true;
                     }
                     break;
                 case OrientationEnum.East:
@@ -93,6 +110,7 @@ namespace Rover
                     if (_x > _maxXCoordinate)
                     {
                         _x = _maxXCoordinate;
+                        result = true;
                     }
                     break;
                 case OrientationEnum.West:
@@ -101,11 +119,13 @@ namespace Rover
                     if (_x < _minXCoordinate)
                     {
                         _x = _minXCoordinate;
+                        result = true;
                     }
                     break;
             }
 
             _position = (_y * 100) + _x;
+            return result;
         }
     }
 }
